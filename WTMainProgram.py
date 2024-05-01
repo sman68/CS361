@@ -1,27 +1,8 @@
 """CLI UI (to hopefully move to GUI Later)"""
 
 import json
+from datetime import datetime
 
-def main_menu():
-    print("\nWelcome to the Water Tracker App!")
-    print("1. Login/Register")
-    print("2. Enter Water Intake")
-    print("3. View History")
-    print("4. Undo Last Entry")
-    print("5. Help")
-    print("6. Exit")
-    choice = input("Choose an option: ")
-    return choice
-
-def help_menu():
-    print("\nHelp Menu:")
-    print("1. Benefits of Logging Water Intake: Keeps you hydrated, improves health.")
-    print("2. How to Use Features: Navigate using menu numbers to log and view water intake.")
-    print("3. Undo Feature: Revert your last logged intake.")
-    print("4. View Options: You can view detailed logs or summaries.")
-    input("Press any key to return to the main menu...")
-
-# Load or initialize user data
 def load_user_data():
     try:
         with open("user_data.json", "r") as file:
@@ -35,6 +16,31 @@ def save_user_data(users):
 
 users = load_user_data()
 current_user = None
+
+def main_menu():
+    print("\nWelcome to the Water Tracker App!")
+    print("1. Login/Register")
+    print("2. Enter Water Intake")
+    print("3. Copy Last Entry")
+    print("4. View History")
+    print("5. Undo Last Entry")
+    print("6. Delete a Specific Entry")
+    print("7. Help")
+    print("8. Exit")
+    choice = input("Choose an option: ")
+    return choice
+
+def help_menu():
+    print("\nHelp Menu:")
+    print("1. Benefits of Logging Water Intake: Keeps you hydrated, improves health.")
+    print("2. How to Use Features: Navigate using menu numbers to log and view water intake.")
+    print("3. Undo Feature: Revert your last logged intake.")
+    print("4. Delete Specific Entry: Remove a particular entry from your history.")
+    print("5. Copy Last Entry: Repeat your last water intake entry.")
+    print("6. View Options: You can view detailed logs or summaries.")
+    print("7. Help Menu: Provides information about all features.")
+    print("8. Exit: Safely close the application.")
+    input("Press any key to return to the main menu...")
 
 def register_login():
     global current_user
@@ -54,20 +60,30 @@ def enter_water_intake():
         amount = input("Enter water intake in milliliters: ")
         try:
             amount = int(amount)
-            users[current_user].append(amount)
-            print(f"Recorded {amount}ml of water intake.")
+            entry = {"date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "amount": amount}
+            users[current_user].append(entry)
+            print(f"Recorded {amount}ml of water intake on {entry['date']}.")
             save_user_data(users)
         except ValueError:
             print("Invalid input. Please enter a number.")
     else:
         print("Please log in first.")
 
+def copy_last_entry():
+    if current_user and users[current_user]:
+        last_entry = users[current_user][-1]
+        users[current_user].append(last_entry)
+        print(f"Copied last entry: {last_entry['amount']}ml on {last_entry['date']}.")
+        save_user_data(users)
+    else:
+        print("No entry to copy or please log in first.")
+
 def view_history():
     if current_user:
         if users[current_user]:
             print(f"\nWater Intake History for {current_user}:")
-            for index, amount in enumerate(users[current_user], start=1):
-                print(f"{index}. {amount}ml")
+            for index, entry in enumerate(users[current_user], start=1):
+                print(f"{index}. {entry['date']}: {entry['amount']}ml")
         else:
             print("No history to display.")
     else:
@@ -76,10 +92,28 @@ def view_history():
 def undo_last_entry():
     if current_user and users[current_user]:
         removed = users[current_user].pop()
-        print(f"Removed last entry: {removed}ml")
+        print(f"Removed last entry: {removed['amount']}ml on {removed['date']}")
         save_user_data(users)
     else:
         print("No entry to undo or please log in first.")
+
+def delete_specific_entry():
+    if current_user:
+        if users[current_user]:
+            print("\nSelect an entry to delete:")
+            for index, entry in enumerate(users[current_user], start=1):
+                print(f"{index}. {entry['date']}: {entry['amount']}ml")
+            selection = int(input("Enter the number of the entry to delete: "))
+            if 1 <= selection <= len(users[current_user]):
+                removed = users[current_user].pop(selection - 1)
+                print(f"Deleted entry: {removed['amount']}ml on {removed['date']}")
+                save_user_data(users)
+            else:
+                print("Invalid selection. No entry deleted.")
+        else:
+            print("No history to display.")
+    else:
+        print("Please log in first.")
 
 def user_session():
     while True:
@@ -89,12 +123,16 @@ def user_session():
         elif choice == '2':
             enter_water_intake()
         elif choice == '3':
-            view_history()
+            copy_last_entry()
         elif choice == '4':
-            undo_last_entry()
+            view_history()
         elif choice == '5':
-            help_menu()
+            undo_last_entry()
         elif choice == '6':
+            delete_specific_entry()
+        elif choice == '7':
+            help_menu()
+        elif choice == '8':
             print("Thank you for using the Water Tracker App!")
             break
         else:
@@ -102,3 +140,4 @@ def user_session():
 
 if __name__ == "__main__":
     user_session()
+
