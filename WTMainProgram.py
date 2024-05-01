@@ -1,5 +1,7 @@
 """CLI UI (to hopefully move to GUI Later)"""
 
+import json
+
 def main_menu():
     print("\nWelcome to the Water Tracker App!")
     print("1. Login/Register")
@@ -19,8 +21,19 @@ def help_menu():
     print("4. View Options: You can view detailed logs or summaries.")
     input("Press any key to return to the main menu...")
 
-# Simple user management
-users = {}
+# Load or initialize user data
+def load_user_data():
+    try:
+        with open("user_data.json", "r") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+def save_user_data(users):
+    with open("user_data.json", "w") as file:
+        json.dump(users, file, indent=4)
+
+users = load_user_data()
 current_user = None
 
 def register_login():
@@ -34,8 +47,8 @@ def register_login():
         users[username] = []
         current_user = username
         print(f"Registration complete. Welcome, {username}!")
+        save_user_data(users)
 
-# Simple water intake tracking
 def enter_water_intake():
     if current_user:
         amount = input("Enter water intake in milliliters: ")
@@ -43,12 +56,12 @@ def enter_water_intake():
             amount = int(amount)
             users[current_user].append(amount)
             print(f"Recorded {amount}ml of water intake.")
+            save_user_data(users)
         except ValueError:
             print("Invalid input. Please enter a number.")
     else:
         print("Please log in first.")
 
-# Viewing history
 def view_history():
     if current_user:
         if users[current_user]:
@@ -60,11 +73,11 @@ def view_history():
     else:
         print("Please log in first.")
 
-# Undo functionality
 def undo_last_entry():
     if current_user and users[current_user]:
         removed = users[current_user].pop()
         print(f"Removed last entry: {removed}ml")
+        save_user_data(users)
     else:
         print("No entry to undo or please log in first.")
 
