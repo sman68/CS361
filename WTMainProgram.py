@@ -22,11 +22,14 @@ def main_menu():
     print("1. Login/Register")
     print("2. Enter Water Intake")
     print("3. Copy Last Entry")
-    print("4. View History")
-    print("5. Undo Last Entry")
-    print("6. Delete a Specific Entry")
-    print("7. Help")
-    print("8. Exit")
+    print("4. View Daily Average")
+    print("5. View Weekly Average")
+    print("6. View Monthly Average")
+    print("7. View All History")
+    print("8. Undo Last Entry")
+    print("9. Delete a Specific Entry")
+    print("10. Help")
+    print("11. Exit")
     choice = input("Choose an option: ")
     return choice
 
@@ -125,14 +128,20 @@ def user_session():
         elif choice == '3':
             copy_last_entry()
         elif choice == '4':
-            view_history()
+            view_average_history('daily')
         elif choice == '5':
-            undo_last_entry()
+            view_average_history('weekly')
         elif choice == '6':
-            delete_specific_entry()
+            view_average_history('monthly')
         elif choice == '7':
-            help_menu()
+            view_history()
         elif choice == '8':
+            undo_last_entry()
+        elif choice == '9':
+            delete_specific_entry()
+        elif choice == '10':
+            help_menu()
+        elif choice == '11':
             print("Thank you for using the Water Tracker App!")
             break
         else:
