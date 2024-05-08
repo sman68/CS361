@@ -10,13 +10,19 @@ def parse_data(data):
 
 @app.route('/average/daily', methods=['POST'])
 def calculate_daily_average():
-    data = request.json
-    values = parse_data(data)
-    if values:
+    data = request.get_json()  # Get data from request body
+    if not data or 'data' not in data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    values = [item['value'] for item in data['data']]  # Assuming 'data' is a list of dictionaries with a 'value' key
+    if not values:
+        return jsonify({'error': 'No values provided'}), 400
+
+    try:
         daily_average = statistics.mean(values)
         return jsonify({'average': daily_average}), 200
-    else:
-        return jsonify({'error': 'No data provided'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/average/weekly', methods=['POST'])
 def calculate_weekly_average():
