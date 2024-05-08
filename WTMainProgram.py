@@ -118,6 +118,31 @@ def delete_specific_entry():
     else:
         print("Please log in first.")
 
+import requests
+
+def calculate_average(period, data):
+    url = f'http://localhost:5000/average/{period}'  # Adjust this URL based on your microservice deployment
+    response = requests.post(url, json={"data": data})
+    if response.status_code == 200:
+        return response.json()['average']
+    else:
+        print("Failed to calculate average:", response.json()['error'])
+        return None
+
+def view_average_history(period):
+    if current_user:
+        if users[current_user]:
+            print(f"\nCalculating {period} average for {current_user}:")
+            user_data = [{"date": entry['date'], "value": entry['amount']} for entry in users[current_user]]
+            average = calculate_average(period, user_data)
+            if average is not None:
+                print(f"The {period} average water intake is: {average}ml")
+        else:
+            print("No data to calculate.")
+    else:
+        print("Please log in first.")
+
+
 def user_session():
     while True:
         choice = main_menu()
