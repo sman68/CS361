@@ -2,6 +2,7 @@
 
 import json
 from datetime import datetime
+import requests
 
 def load_user_data():
     try:
@@ -118,7 +119,11 @@ def delete_specific_entry():
     else:
         print("Please log in first.")
 
-import requests
+
+def prepare_data_for_average(user_entries):
+    # Flatten the list of amounts from the entries
+    return [{"value": entry['amount']} for entry in user_entries]
+
 
 def calculate_average(period, data):
     url = f'http://localhost:5000/average/{period}'  # Adjust this URL based on your microservice deployment
@@ -126,14 +131,14 @@ def calculate_average(period, data):
     if response.status_code == 200:
         return response.json()['average']
     else:
-        print("Failed to calculate average:", response.json()['error'])
+        print("Failed to calculate average:", response.text)
         return None
 
 def view_average_history(period):
     if current_user:
         if users[current_user]:
             print(f"\nCalculating {period} average for {current_user}:")
-            user_data = [{"date": entry['date'], "value": entry['amount']} for entry in users[current_user]]
+            user_data = prepare_data_for_average(users[current_user])
             average = calculate_average(period, user_data)
             if average is not None:
                 print(f"The {period} average water intake is: {average}ml")
@@ -141,6 +146,7 @@ def view_average_history(period):
             print("No data to calculate.")
     else:
         print("Please log in first.")
+
 
 
 def user_session():

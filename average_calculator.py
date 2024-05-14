@@ -10,39 +10,42 @@ def parse_data(data):
 
 @app.route('/average/daily', methods=['POST'])
 def calculate_daily_average():
-    data = request.get_json()  # Get data from request body
+    data = request.get_json()
     if not data or 'data' not in data:
-        return jsonify({'error': 'No data provided'}), 400
-
-    values = [item['value'] for item in data['data']]  # Assuming 'data' is a list of dictionaries with a 'value' key
-    if not values:
-        return jsonify({'error': 'No values provided'}), 400
-
+        return jsonify({'error': 'Data is missing'}), 400
     try:
+        values = [entry['value'] for entry in data['data'] if 'value' in entry]
         daily_average = statistics.mean(values)
         return jsonify({'average': daily_average}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid data provided'}), 400
+
+
 
 @app.route('/average/weekly', methods=['POST'])
 def calculate_weekly_average():
-    data = request.json
-    values = parse_data(data)
-    if values:
+    data = request.get_json()
+    if not data or 'data' not in data:
+        return jsonify({'error': 'Data is missing'}), 400
+    try:
+        values = [entry['value'] for entry in data['data'] if 'value' in entry]
         weekly_average = statistics.mean(values)
         return jsonify({'average': weekly_average}), 200
-    else:
-        return jsonify({'error': 'No data provided'}), 400
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid data provided'}), 400
 
 @app.route('/average/monthly', methods=['POST'])
 def calculate_monthly_average():
-    data = request.json
-    values = parse_data(data)
-    if values:
+    data = request.get_json()
+    if not data or 'data' not in data:
+        return jsonify({'error': 'Data is missing'}), 400
+    try:
+        values = [entry['value'] for entry in data['data'] if 'value' in entry]
         monthly_average = statistics.mean(values)
         return jsonify({'average': monthly_average}), 200
-    else:
-        return jsonify({'error': 'No data provided'}), 400
-
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid data provided'}), 400
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)
