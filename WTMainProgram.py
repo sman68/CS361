@@ -62,14 +62,17 @@ def register_login():
 def enter_water_intake():
     if current_user:
         amount = input("Enter water intake in milliliters: ")
+        date_str = input("Enter date (mm/dd/yyyy): ")  # New date input
         try:
             amount = int(amount)
-            entry = {"date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "amount": amount}
+            # Convert string to datetime object
+            date = datetime.strptime(date_str, '%m/%d/%Y')
+            entry = {"date": date.strftime("%Y-%m-%d %H:%M:%S"), "amount": amount}
             users[current_user].append(entry)
             print(f"Recorded {amount}ml of water intake on {entry['date']}.")
             save_user_data(users)
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print("Invalid input. Please enter the correct values.")
     else:
         print("Please log in first.")
 
@@ -107,13 +110,16 @@ def delete_specific_entry():
             print("\nSelect an entry to delete:")
             for index, entry in enumerate(users[current_user], start=1):
                 print(f"{index}. {entry['date']}: {entry['amount']}ml")
-            selection = int(input("Enter the number of the entry to delete: "))
-            if 1 <= selection <= len(users[current_user]):
-                removed = users[current_user].pop(selection - 1)
-                print(f"Deleted entry: {removed['amount']}ml on {removed['date']}")
-                save_user_data(users)
-            else:
-                print("Invalid selection. No entry deleted.")
+            try:
+                selection = int(input("Enter the number of the entry to delete: "))
+                if 1 <= selection <= len(users[current_user]):
+                    removed = users[current_user].pop(selection - 1)
+                    print(f"Deleted entry: {removed['amount']}ml on {removed['date']}")
+                    save_user_data(users)
+                else:
+                    print("Invalid selection. No entry deleted.")
+            except ValueError:
+                print("Invalid input. Please enter a number.")
         else:
             print("No history to display.")
     else:
@@ -121,8 +127,8 @@ def delete_specific_entry():
 
 
 def prepare_data_for_average(user_entries):
-    # Flatten the list of amounts from the entries
-    return [{"value": entry['amount']} for entry in user_entries]
+    # Prepare data by extracting the date and amount for averaging
+    return [{"date": entry['date'], "amount": entry['amount']} for entry in user_entries]
 
 
 def calculate_average(period, data):
@@ -146,6 +152,7 @@ def view_average_history(period):
             print("No data to calculate.")
     else:
         print("Please log in first.")
+
 
 
 

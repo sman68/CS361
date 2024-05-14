@@ -5,8 +5,20 @@ import statistics
 app = Flask(__name__)
 
 def parse_data(data):
-    """ Parses the input data and returns a list of values. """
-    return [entry['value'] for entry in data]
+    """Parses the input data and returns a list of values."""
+    return [entry['amount'] for entry in data]
+
+def group_by_period(data, period_func):
+    grouped_data = {}
+    for entry in data:
+        period = period_func(entry['date'])
+        if period not in grouped_data:
+            grouped_data[period] = []
+        grouped_data[period].append(entry['amount'])
+    return grouped_data
+
+def calculate_average(grouped_data):
+    return {period: statistics.mean(amounts) for period, amounts in grouped_data.items()}
 
 @app.route('/average/daily', methods=['POST'])
 def calculate_daily_average():
@@ -14,13 +26,12 @@ def calculate_daily_average():
     if not data or 'data' not in data:
         return jsonify({'error': 'Data is missing'}), 400
     try:
-        values = [entry['value'] for entry in data['data'] if 'value' in entry]
-        daily_average = statistics.mean(values)
+        entries = [{'date': datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'), 'amount': entry['amount']} for entry in data['data']]
+        daily_data = group_by_period(entries, lambda date: date.strftime('%Y-%m-%d'))
+        daily_average = calculate_average(daily_data)
         return jsonify({'average': daily_average}), 200
     except (TypeError, ValueError):
         return jsonify({'error': 'Invalid data provided'}), 400
-
-
 
 @app.route('/average/weekly', methods=['POST'])
 def calculate_weekly_average():
@@ -28,8 +39,9 @@ def calculate_weekly_average():
     if not data or 'data' not in data:
         return jsonify({'error': 'Data is missing'}), 400
     try:
-        values = [entry['value'] for entry in data['data'] if 'value' in entry]
-        weekly_average = statistics.mean(values)
+        entries = [{'date': datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'), 'amount': entry['amount']} for entry in data['data']]
+        weekly_data = group_by_period(entries, lambda date: (date - timedelta(days=date.weekday())).strftime('%Y-%m-%d'))
+        weekly_average = calculate_average(weekly_data)
         return jsonify({'average': weekly_average}), 200
     except (TypeError, ValueError):
         return jsonify({'error': 'Invalid data provided'}), 400
@@ -40,12 +52,12 @@ def calculate_monthly_average():
     if not data or 'data' not in data:
         return jsonify({'error': 'Data is missing'}), 400
     try:
-        values = [entry['value'] for entry in data['data'] if 'value' in entry]
-        monthly_average = statistics.mean(values)
+        entries = [{'date': datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'), 'amount': entry['amount']} for entry in data['data']]
+        monthly_data = group_by_period(entries, lambda date: date.strftime('%Y-%m'))
+        monthly_average = calculate_average(monthly_data)
         return jsonify({'average': monthly_average}), 200
     except (TypeError, ValueError):
         return jsonify({'error': 'Invalid data provided'}), 400
-    
-    
+
 if __name__ == '__main__':
     app.run(debug=True)
