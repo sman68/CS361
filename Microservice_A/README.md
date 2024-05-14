@@ -3,8 +3,8 @@
 ### Instructions
         1. **Clone this repository:**
             ```bash
-            git clone <repository_url>
-            cd <repository_directory>
+            git clone <https://github.com/sman68/CS361.git>
+            cd <Microservice_A>
             ```
 
         2. **Set up the virtual environment and install dependencies:**
