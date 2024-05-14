@@ -129,16 +129,15 @@ For any questions or issues, please contact Steven Pamplin at spamplin@gmail.com
 Below is the UML sequence diagram that illustrates how requesting and receiving data from the average calculator microservice works.
 
 ```plaintext
-+-----------+         +-------------------+
-|   Client  |         |   Average Service |
-+-----------+         +-------------------+
-      |                         |
-      |    POST /average/daily  |
-      |------------------------>|
-      |                         |
-      |       Calculate Daily Average        |
-      |                         |
-      |                         |
-      |     JSON Response       |
-      |<------------------------|
-      |                         |
++--------------------+        +-------------------------+
+|      WTMainProgram |        |     average_calculator  |
++--------------------+        +-------------------------+
+            |                             |
+            |     POST /average/daily     |
+            |---------------------------->|
+            |                             |
+            |     Calculate Daily Average |
+            |                             |
+            |         Response            |
+            |<----------------------------|
+            |                             |
