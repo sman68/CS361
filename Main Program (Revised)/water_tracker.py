@@ -9,32 +9,48 @@ class WaterTrackerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Water Tracker App")
+        self.root.geometry("800x600")
+        self.root.configure(bg="lightblue")
         self.current_user = None
 
-        self.main_frame = tk.Frame(root)
+        self.main_frame = tk.Frame(root, bg="lightblue")
         self.main_frame.pack()
 
+        self.custom_font = ("Helvetica", 12)
+        self.custom_title_font = ("Helvetica", 16, "bold")
+
         self.create_main_menu()
+        self.bind_keys()
+
+    def bind_keys(self):
+        self.root.bind('1', lambda event: self.register_login())
+        self.root.bind('2', lambda event: self.enter_water_intake())
+        self.root.bind('3', lambda event: self.copy_last_entry())
+        self.root.bind('4', lambda event: self.view_average_history('daily'))
+        self.root.bind('5', lambda event: self.view_average_history('weekly'))
+        self.root.bind('6', lambda event: self.view_average_history('monthly'))
+        self.root.bind('7', lambda event: self.view_history())
+        self.root.bind('8', lambda event: self.undo_last_entry())
+        self.root.bind('9', lambda event: self.delete_specific_entry())
+        self.root.bind('0', lambda event: self.help_menu())
+        self.root.bind('<Escape>', lambda event: self.root.quit())
 
     def create_main_menu(self):
         self.clear_frame(self.main_frame)
 
-        title_font = ("Helvetica", 16, "bold")
-        button_font = ("Helvetica", 12, "bold")
-
-        tk.Label(self.main_frame, text="Welcome to the Water Tracker App!", font=title_font).pack()
+        tk.Label(self.main_frame, text="Welcome to the Water Tracker App!", font=self.custom_title_font, bg="lightblue").pack(pady=10)
         
-        tk.Button(self.main_frame, text="Login/Register", command=self.register_login, font=button_font).pack()
-        tk.Button(self.main_frame, text="Enter Water Intake", command=self.enter_water_intake, font=button_font).pack()
-        tk.Button(self.main_frame, text="Copy Last Entry", command=self.copy_last_entry, font=button_font).pack()
-        tk.Button(self.main_frame, text="View Daily Average", command=lambda: self.view_average_history('daily'), font=button_font).pack()
-        tk.Button(self.main_frame, text="View Weekly Average", command=lambda: self.view_average_history('weekly'), font=button_font).pack()
-        tk.Button(self.main_frame, text="View Monthly Average", command=lambda: self.view_average_history('monthly'), font=button_font).pack()
-        tk.Button(self.main_frame, text="View All History", command=self.view_history, font=button_font).pack()
-        tk.Button(self.main_frame, text="Undo Last Entry", command=self.undo_last_entry, font=button_font).pack()
-        tk.Button(self.main_frame, text="Delete a Specific Entry", command=self.delete_specific_entry, font=button_font).pack()
-        tk.Button(self.main_frame, text="Help", command=self.help_menu, font=button_font).pack()
-        tk.Button(self.main_frame, text="Exit", command=self.root.quit, font=button_font).pack()
+        tk.Button(self.main_frame, text="1. Login/Register", command=self.register_login, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="2. Enter Water Intake", command=self.enter_water_intake, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="3. Copy Last Entry", command=self.copy_last_entry, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="4. View Daily Average", command=lambda: self.view_average_history('daily'), font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="5. View Weekly Average", command=lambda: self.view_average_history('weekly'), font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="6. View Monthly Average", command=lambda: self.view_average_history('monthly'), font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="7. View All History", command=self.view_history, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="8. Undo Last Entry", command=self.undo_last_entry, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="9. Delete a Specific Entry", command=self.delete_specific_entry, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="0. Help", command=self.help_menu, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="Esc. Exit", command=self.root.quit, font=self.custom_font, bg="white").pack(pady=5)
 
     def clear_frame(self, frame):
         for widget in frame.winfo_children():
@@ -43,27 +59,30 @@ class WaterTrackerApp:
     def help_menu(self):
         self.clear_frame(self.main_frame)
         
-        tk.Label(self.main_frame, text="Help Menu").pack()
+        tk.Label(self.main_frame, text="Help Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
         help_text = """
-        1. Benefits of Logging Water Intake: Keeps you hydrated, improves health.
-        2. How to Use Features: Navigate using menu numbers to log and view water intake.
-        3. Undo Feature: Revert your last logged intake.
-        4. Delete Specific Entry: Remove a particular entry from your history.
-        5. Copy Last Entry: Repeat your last water intake entry.
-        6. View Options: You can view detailed logs or summaries.
-        7. Help Menu: Provides information about all features.
-        8. Exit: Safely close the application.
+        1. Login/Register
+        2. Enter Water Intake
+        3. Copy Last Entry
+        4. View Daily Average
+        5. View Weekly Average
+        6. View Monthly Average
+        7. View All History
+        8. Undo Last Entry
+        9. Delete a Specific Entry
+        0. Help
+        Esc. Exit
         """
-        tk.Label(self.main_frame, text=help_text, justify=tk.LEFT).pack()
-        tk.Button(self.main_frame, text="Back", command=self.create_main_menu).pack()
+        tk.Label(self.main_frame, text=help_text, justify=tk.LEFT, bg="lightblue", font=self.custom_font).pack(pady=10)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
 
     def register_login(self):
         self.clear_frame(self.main_frame)
         
-        tk.Label(self.main_frame, text="Register/Login").pack()
-        tk.Label(self.main_frame, text="Username:").pack()
+        tk.Label(self.main_frame, text="Register/Login", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+        tk.Label(self.main_frame, text="Username:", bg="lightblue", font=self.custom_font).pack()
         username_entry = tk.Entry(self.main_frame)
-        username_entry.pack()
+        username_entry.pack(pady=5)
 
         def submit():
             username = username_entry.get()
@@ -83,21 +102,21 @@ class WaterTrackerApp:
             else:
                 messagebox.showerror("Error", "Unable to register or login.")
 
-        tk.Button(self.main_frame, text="Submit", command=submit).pack()
-        tk.Button(self.main_frame, text="Back", command=self.create_main_menu).pack()
+        tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
 
     def enter_water_intake(self):
         if self.current_user:
             self.clear_frame(self.main_frame)
             
-            tk.Label(self.main_frame, text="Enter Water Intake").pack()
-            tk.Label(self.main_frame, text="Amount (ml):").pack()
+            tk.Label(self.main_frame, text="Enter Water Intake", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+            tk.Label(self.main_frame, text="Amount (ml):", bg="lightblue", font=self.custom_font).pack()
             amount_entry = tk.Entry(self.main_frame)
-            amount_entry.pack()
+            amount_entry.pack(pady=5)
             
-            tk.Label(self.main_frame, text="Date (mm/dd/yyyy):").pack()
+            tk.Label(self.main_frame, text="Date (mm/dd/yyyy):", bg="lightblue", font=self.custom_font).pack()
             date_entry = tk.Entry(self.main_frame)
-            date_entry.pack()
+            date_entry.pack(pady=5)
 
             def submit():
                 amount = amount_entry.get()
@@ -115,8 +134,8 @@ class WaterTrackerApp:
                 except ValueError:
                     messagebox.showerror("Error", "Invalid input. Please enter the correct values.")
 
-            tk.Button(self.main_frame, text="Submit", command=submit).pack()
-            tk.Button(self.main_frame, text="Back", command=self.create_main_menu).pack()
+            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
+            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
         else:
             messagebox.showwarning("Warning", "Please log in first.")
 
@@ -144,10 +163,10 @@ class WaterTrackerApp:
         if self.current_user:
             self.clear_frame(self.main_frame)
             
-            tk.Label(self.main_frame, text="Delete Specific Entry").pack()
-            tk.Label(self.main_frame, text="Entry Number:").pack()
+            tk.Label(self.main_frame, text="Delete Specific Entry", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+            tk.Label(self.main_frame, text="Entry Number:", bg="lightblue", font=self.custom_font).pack()
             entry_number_entry = tk.Entry(self.main_frame)
-            entry_number_entry.pack()
+            entry_number_entry.pack(pady=5)
 
             def submit():
                 entry_number = entry_number_entry.get()
@@ -162,8 +181,8 @@ class WaterTrackerApp:
                 except ValueError:
                     messagebox.showerror("Error", "Invalid input. Please enter a number.")
 
-            tk.Button(self.main_frame, text="Submit", command=submit).pack()
-            tk.Button(self.main_frame, text="Back", command=self.create_main_menu).pack()
+            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
+            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
         else:
             messagebox.showwarning("Warning", "Please log in first.")
 
@@ -173,13 +192,13 @@ class WaterTrackerApp:
             if response.status_code == 200:
                 history = response.json()
                 self.clear_frame(self.main_frame)
-                tk.Label(self.main_frame, text=f"Water Intake History for {self.current_user}:").pack()
+                tk.Label(self.main_frame, text=f"Water Intake History for {self.current_user}:", font=self.custom_title_font, bg="lightblue").pack(pady=10)
                 if history:
                     for index, entry in enumerate(history, start=1):
-                        tk.Label(self.main_frame, text=f"{index}. {entry['date']}: {entry['amount']}ml").pack()
+                        tk.Label(self.main_frame, text=f"{index}. {entry['date']}: {entry['amount']}ml", bg="lightblue", font=self.custom_font).pack()
                 else:
-                    tk.Label(self.main_frame, text="No history to display.").pack()
-                tk.Button(self.main_frame, text="Back", command=self.create_main_menu).pack()
+                    tk.Label(self.main_frame, text="No history to display.", bg="lightblue", font=self.custom_font).pack()
+                tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
             else:
                 messagebox.showerror("Error", response.json()['status'])
         else:
