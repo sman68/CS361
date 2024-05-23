@@ -1,5 +1,3 @@
-"""CLI UI (to hopefully move to GUI Later)"""
-
 import tkinter as tk
 from tkinter import messagebox
 import requests
@@ -34,6 +32,7 @@ class WaterTrackerApp:
         self.root.bind('9', lambda event: self.delete_specific_entry())
         self.root.bind('0', lambda event: self.help_menu())
         self.root.bind('<Escape>', lambda event: self.root.quit())
+        self.root.bind('I', lambda event: self.inspiration_menu())
 
     def create_main_menu(self):
         self.clear_frame(self.main_frame)
@@ -49,6 +48,7 @@ class WaterTrackerApp:
         tk.Button(self.main_frame, text="7. View All History", command=self.view_history, font=self.custom_font, bg="white").pack(pady=5)
         tk.Button(self.main_frame, text="8. Undo Last Entry", command=self.undo_last_entry, font=self.custom_font, bg="white").pack(pady=5)
         tk.Button(self.main_frame, text="9. Delete a Specific Entry", command=self.delete_specific_entry, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="I. Inspiration", command=self.inspiration_menu, font=self.custom_font, bg="white").pack(pady=5)
         tk.Button(self.main_frame, text="0. Help", command=self.help_menu, font=self.custom_font, bg="white").pack(pady=5)
         tk.Button(self.main_frame, text="Esc. Exit", command=self.root.quit, font=self.custom_font, bg="white").pack(pady=5)
 
@@ -70,6 +70,7 @@ class WaterTrackerApp:
         7. View All History
         8. Undo Last Entry
         9. Delete a Specific Entry
+        I. Inspiration
         0. Help
         Esc. Exit
         """
@@ -228,6 +229,46 @@ class WaterTrackerApp:
         else:
             print("Failed to calculate average:", response.text)
             return None
+
+    def inspiration_menu(self):
+        self.clear_frame(self.main_frame)
+        
+        tk.Label(self.main_frame, text="Inspiration Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+        tk.Button(self.main_frame, text="Get Random Quote", command=self.get_random_quote, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="View Favorite Quotes", command=self.get_favorite_quotes, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+
+    def get_random_quote(self):
+        response = requests.get('http://localhost:5000/quotes')
+        if response.status_code == 200:
+            quote = response.json()["quote"]
+            favorite = messagebox.askyesno("Random Quote", f"{quote}\n\nDo you want to favorite this quote?")
+            if favorite:
+                self.favorite_quote(quote)
+        else:
+            messagebox.showerror("Error", "Could not retrieve quote")
+
+    def get_favorite_quotes(self):
+        response = requests.get('http://localhost:5000/quotes/favorites')
+        if response.status_code == 200:
+            favorites = response.json()
+            self.clear_frame(self.main_frame)
+            tk.Label(self.main_frame, text=f"Favorite Quotes:", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+            if favorites:
+                for index, favorite in enumerate(favorites, start=1):
+                    tk.Label(self.main_frame, text=f"{index}. {favorite['quote']}", bg="lightblue", font=self.custom_font).pack()
+            else:
+                tk.Label(self.main_frame, text="No favorite quotes to display.", bg="lightblue", font=self.custom_font).pack()
+            tk.Button(self.main_frame, text="Back", command=self.inspiration_menu, font=self.custom_font, bg="white").pack(pady=5)
+        else:
+            messagebox.showerror("Error", "Could not retrieve favorite quotes")
+
+    def favorite_quote(self, quote):
+        response = requests.post('http://localhost:5000/quotes/favorite', json={"quote": quote})
+        if response.status_code == 201:
+            messagebox.showinfo("Success", "Quote favorited successfully")
+        else:
+            messagebox.showerror("Error", "Could not favorite quote")
 
 if __name__ == "__main__":
     root = tk.Tk()
