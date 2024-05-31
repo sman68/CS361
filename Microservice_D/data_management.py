@@ -4,6 +4,7 @@ import json
 app = Flask(__name__)
 
 def load_user_data():
+    """Loads user data from a JSON file."""
     try:
         with open("user_data.json", "r") as file:
             return json.load(file)
@@ -11,11 +12,13 @@ def load_user_data():
         return {}
 
 def save_user_data(users):
+    """Saves user data to a JSON file."""
     with open("user_data.json", "w") as file:
         json.dump(users, file, indent=4)
 
 @app.route('/copy_last_entry', methods=['POST'])
 def copy_last_entry():
+    """Endpoint to copy the last water intake entry for a user."""
     users = load_user_data()
     username = request.json.get('username')
     if username not in users or not users[username]:
@@ -27,6 +30,7 @@ def copy_last_entry():
 
 @app.route('/undo_last_entry', methods=['POST'])
 def undo_last_entry():
+    """Endpoint to undo the last water intake entry for a user."""
     users = load_user_data()
     username = request.json.get('username')
     if username not in users or not users[username]:
@@ -37,6 +41,7 @@ def undo_last_entry():
 
 @app.route('/delete_entry', methods=['POST'])
 def delete_entry():
+    """Endpoint to delete a specific water intake entry for a user."""
     users = load_user_data()
     username = request.json.get('username')
     entry_number = request.json.get('entry_number')
@@ -47,4 +52,5 @@ def delete_entry():
     return jsonify({'status': f'Entry deleted: {removed["amount"]}ml on {removed["date"]}'}), 200
 
 if __name__ == '__main__':
+    # Run the Flask application on port 5003
     app.run(debug=True, port=5003)

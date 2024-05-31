@@ -33,6 +33,7 @@ class WaterTrackerApp:
         self.bind_keys()
 
     def bind_keys(self):
+        """Bind keys to menu options for easy navigation."""
         self.root.bind('1', lambda event: self.register_login())
         self.root.bind('2', lambda event: self.enter_water_intake())
         self.root.bind('3', lambda event: self.copy_last_entry())
@@ -47,6 +48,7 @@ class WaterTrackerApp:
         self.root.bind('<Escape>', lambda event: self.root.quit())
 
     def unbind_keys(self):
+        """Unbind keys when focus is needed in entry fields."""
         self.root.unbind('1')
         self.root.unbind('2')
         self.root.unbind('3')
@@ -60,6 +62,7 @@ class WaterTrackerApp:
         self.root.unbind('I')
 
     def create_main_menu(self):
+        """Create the main menu interface."""
         self.clear_frame(self.main_frame)
 
         tk.Label(self.main_frame, text="Welcome to the Water Tracker App!", font=self.custom_title_font, bg="lightblue").pack(pady=10)
@@ -78,10 +81,12 @@ class WaterTrackerApp:
         tk.Button(self.main_frame, text="Esc. Exit", command=self.root.quit, font=self.custom_font, bg="white").pack(pady=5)
 
     def clear_frame(self, frame):
+        """Clears all widgets from the given frame."""
         for widget in frame.winfo_children():
             widget.destroy()
 
     def help_menu(self):
+        """Displays the help menu."""
         self.clear_frame(self.main_frame)
         
         tk.Label(self.main_frame, text="Help Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
@@ -102,8 +107,8 @@ class WaterTrackerApp:
         tk.Label(self.main_frame, text=help_text, justify=tk.LEFT, bg="lightblue", font=self.custom_font).pack(pady=10)
         tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
 
-
     def register_login(self):
+        """Displays the login/register interface."""
         self.clear_frame(self.main_frame)
         
         tk.Label(self.main_frame, text="Register/Login", font=self.custom_title_font, bg="lightblue").pack(pady=10)
@@ -130,6 +135,7 @@ class WaterTrackerApp:
         tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
 
     def enter_water_intake(self):
+        """Displays the interface to enter water intake."""
         if self.current_user:
             self.clear_frame(self.main_frame)
             
@@ -166,6 +172,7 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def copy_last_entry(self):
+        """Copies the last water intake entry."""
         if self.current_user:
             if copy_last_entry(self.current_user):
                 messagebox.showinfo("Success", "Copied last entry successfully.")
@@ -175,6 +182,7 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def undo_last_entry(self):
+        """Undoes the last water intake entry."""
         if self.current_user:
             if undo_last_entry(self.current_user):
                 messagebox.showinfo("Success", "Undid last entry successfully.")
@@ -184,6 +192,7 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def delete_specific_entry(self):
+        """Deletes a specific water intake entry."""
         if self.current_user:
             self.clear_frame(self.main_frame)
             
@@ -212,6 +221,7 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def view_history(self):
+        """Displays the user's water intake history."""
         if self.current_user:
             history = view_history(self.current_user)
             if history is not None:
@@ -229,6 +239,7 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def view_average_history(self, period):
+        """Displays the average water intake for a given period (daily, weekly, monthly)."""
         if self.current_user:
             history = view_history(self.current_user)
             if history is not None:
@@ -244,9 +255,11 @@ class WaterTrackerApp:
             messagebox.showwarning("Warning", "Please log in first.")
 
     def prepare_data_for_average(self, user_entries):
+        """Prepares user entries for average calculation."""
         return [{"date": entry['date'], "amount": entry['amount']} for entry in user_entries]
 
     def inspiration_menu(self):
+        """Displays the inspiration menu."""
         self.clear_frame(self.main_frame)
         
         tk.Label(self.main_frame, text="Inspiration Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
@@ -255,6 +268,7 @@ class WaterTrackerApp:
         tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
 
     def get_random_quote(self):
+        """Fetches and displays a random inspirational quote."""
         quote = get_random_quote()
         if quote:
             favorite = messagebox.askyesno("Random Quote", f"{quote}\n\nDo you want to favorite this quote?")
@@ -264,6 +278,7 @@ class WaterTrackerApp:
             messagebox.showerror("Error", "Could not retrieve quote")
 
     def get_favorite_quotes(self):
+        """Displays the user's favorite quotes."""
         favorites = get_favorite_quotes()
         if favorites is not None:
             self.clear_frame(self.main_frame)
@@ -278,6 +293,7 @@ class WaterTrackerApp:
             messagebox.showerror("Error", "Could not retrieve favorite quotes")
 
     def favorite_quote(self, quote):
+        """Favorites a quote."""
         if favorite_quote(quote):
             messagebox.showinfo("Success", "Quote favorited successfully")
         else:
