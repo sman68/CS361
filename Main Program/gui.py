@@ -19,7 +19,7 @@ class WaterTrackerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Water Tracker App")
-        self.root.geometry("800x600")
+        self.root.geometry("1280x720")
         self.root.configure(bg="lightblue")
         self.current_user = None
 

@@ -40,7 +40,7 @@ def view_history(username):
 
 def calculate_average(period, data):
     """Calculates the average water intake for a given period."""
-    url = f'http://localhost:5000/average/{period}'
+    url = f'http://localhost:5004/average/{period}'
     response = requests.post(url, json={"data": data})
     if response.status_code == 200:
         return response.json()['average']
