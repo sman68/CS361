@@ -54,8 +54,6 @@ def calculate_average(period, data):
         return response.json()['average']
     return None
 
-import requests
-
 def get_random_quote():
     """Fetches a random inspirational quote."""
     print("Fetching a random quote")
