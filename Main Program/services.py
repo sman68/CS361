@@ -54,6 +54,8 @@ def calculate_average(period, data):
         return response.json()['average']
     return None
 
+import requests
+
 def get_random_quote():
     """Fetches a random inspirational quote."""
     print("Fetching a random quote")
@@ -65,7 +67,7 @@ def get_random_quote():
 def get_favorite_quotes():
     """Fetches the favorite quotes for a user."""
     print("Fetching favorite quotes")
-    response = requests.get('http://localhost:5000/favorites')
+    response = requests.get('http://localhost:5000/quotes/favorites')
     if response.status_code == 200:
         return response.json()
     return None
@@ -73,5 +75,5 @@ def get_favorite_quotes():
 def favorite_quote(quote):
     """Favorites a quote for a user."""
     print(f"Favoriting quote: {quote}")
-    response = requests.post('http://localhost:5000/favorite', json={"quote": quote})
-    return response.status_code == 200
+    response = requests.post('http://localhost:5000/quotes/favorite', json={"quote": quote})
+    return response.status_code == 201
