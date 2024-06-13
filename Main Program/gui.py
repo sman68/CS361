@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 from datetime import datetime
 from services import (
     register_user,
@@ -19,15 +20,15 @@ class WaterTrackerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Water Tracker App")
-        self.root.geometry("1280x720")
-        self.root.configure(bg="lightblue")
+        self.root.geometry("1920x1080")
+        self.root.configure(bg="#282C34")
         self.current_user = None
 
-        self.main_frame = tk.Frame(root, bg="lightblue")
-        self.main_frame.pack()
+        self.main_frame = tk.Frame(root, bg="#282C34")
+        self.main_frame.pack(expand=True)
 
-        self.custom_font = ("Helvetica", 12)
-        self.custom_title_font = ("Helvetica", 16, "bold")
+        self.custom_font = ("Helvetica", 16)
+        self.custom_title_font = ("Helvetica", 24, "bold")
 
         self.create_main_menu()
         self.bind_keys()
@@ -65,20 +66,32 @@ class WaterTrackerApp:
         """Create the main menu interface."""
         self.clear_frame(self.main_frame)
 
-        tk.Label(self.main_frame, text="Welcome to the Water Tracker App!", font=self.custom_title_font, bg="lightblue").pack(pady=10)
-        
-        tk.Button(self.main_frame, text="1. Login/Register", command=self.register_login, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="2. Enter Water Intake", command=self.enter_water_intake, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="3. Copy Last Entry", command=self.copy_last_entry, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="4. View Daily Average", command=lambda: self.view_average_history('daily'), font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="5. View Weekly Average", command=lambda: self.view_average_history('weekly'), font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="6. View Monthly Average", command=lambda: self.view_average_history('monthly'), font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="7. View All History", command=self.view_history, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="8. Undo Last Entry", command=self.undo_last_entry, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="9. Delete a Specific Entry", command=self.delete_specific_entry, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="I. Inspiration", command=self.inspiration_menu, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="0. Help", command=self.help_menu, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="Esc. Exit", command=self.root.quit, font=self.custom_font, bg="white").pack(pady=5)
+        title = tk.Label(self.main_frame, text="Welcome to the Water Tracker App!", font=self.custom_title_font, fg="#61DAFB", bg="#282C34")
+        title.pack(pady=20)
+
+        self.add_image(self.main_frame, "logo.png", 200, 200)
+
+        tk.Button(self.main_frame, text="1. Login/Register", command=self.register_login, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="2. Enter Water Intake", command=self.enter_water_intake, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="3. Copy Last Entry", command=self.copy_last_entry, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="4. View Daily Average", command=lambda: self.view_average_history('daily'), font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="5. View Weekly Average", command=lambda: self.view_average_history('weekly'), font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="6. View Monthly Average", command=lambda: self.view_average_history('monthly'), font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="7. View All History", command=self.view_history, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="8. Undo Last Entry", command=self.undo_last_entry, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="9. Delete a Specific Entry", command=self.delete_specific_entry, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="I. Inspiration", command=self.inspiration_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="0. Help", command=self.help_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+        tk.Button(self.main_frame, text="Esc. Exit", command=self.root.quit, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=30).pack(pady=10)
+
+    def add_image(self, frame, image_path, width, height):
+        """Adds an image to the given frame."""
+        image = Image.open(image_path)
+        image = image.resize((width, height), Image.LANCZOS)
+        photo = ImageTk.PhotoImage(image)
+        label = tk.Label(frame, image=photo, bg="#282C34")
+        label.image = photo  # Keep a reference to avoid garbage collection
+        label.pack(pady=20)
 
     def clear_frame(self, frame):
         """Clears all widgets from the given frame."""
@@ -89,7 +102,7 @@ class WaterTrackerApp:
         """Displays the help menu."""
         self.clear_frame(self.main_frame)
         
-        tk.Label(self.main_frame, text="Help Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+        tk.Label(self.main_frame, text="Help Menu", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
         help_text = """
         1. Login/Register: Allows you to create a new user account or log in to an existing one. This ensures your data is personalized and secure.
         2. Enter Water Intake: Record the amount of water you've consumed. You can enter the date and amount to track your hydration.
@@ -104,17 +117,17 @@ class WaterTrackerApp:
         0. Help: Display this help menu to learn about each feature and how to use it.
         Esc. Exit: Close the application safely.
         """
-        tk.Label(self.main_frame, text=help_text, justify=tk.LEFT, bg="lightblue", font=self.custom_font).pack(pady=10)
-        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Label(self.main_frame, text=help_text, justify=tk.LEFT, fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack(pady=20)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
 
     def register_login(self):
         """Displays the login/register interface."""
         self.clear_frame(self.main_frame)
         
-        tk.Label(self.main_frame, text="Register/Login", font=self.custom_title_font, bg="lightblue").pack(pady=10)
-        tk.Label(self.main_frame, text="Username:", bg="lightblue", font=self.custom_font).pack()
-        username_entry = tk.Entry(self.main_frame)
-        username_entry.pack(pady=5)
+        tk.Label(self.main_frame, text="Register/Login", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
+        tk.Label(self.main_frame, text="Username:", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+        username_entry = tk.Entry(self.main_frame, font=self.custom_font)
+        username_entry.pack(pady=10)
         username_entry.bind("<FocusIn>", lambda event: self.unbind_keys())
         username_entry.bind("<FocusOut>", lambda event: self.bind_keys())
 
@@ -131,24 +144,24 @@ class WaterTrackerApp:
             else:
                 messagebox.showerror("Error", "Unable to register or login.")
 
-        tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
 
     def enter_water_intake(self):
         """Displays the interface to enter water intake."""
         if self.current_user:
             self.clear_frame(self.main_frame)
             
-            tk.Label(self.main_frame, text="Enter Water Intake", font=self.custom_title_font, bg="lightblue").pack(pady=10)
-            tk.Label(self.main_frame, text="Amount (ml):", bg="lightblue", font=self.custom_font).pack()
-            amount_entry = tk.Entry(self.main_frame)
-            amount_entry.pack(pady=5)
+            tk.Label(self.main_frame, text="Enter Water Intake", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
+            tk.Label(self.main_frame, text="Amount (ml):", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+            amount_entry = tk.Entry(self.main_frame, font=self.custom_font)
+            amount_entry.pack(pady=10)
             amount_entry.bind("<FocusIn>", lambda event: self.unbind_keys())
             amount_entry.bind("<FocusOut>", lambda event: self.bind_keys())
             
-            tk.Label(self.main_frame, text="Date (mm/dd/yyyy):", bg="lightblue", font=self.custom_font).pack()
-            date_entry = tk.Entry(self.main_frame)
-            date_entry.pack(pady=5)
+            tk.Label(self.main_frame, text="Date (mm/dd/yyyy):", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+            date_entry = tk.Entry(self.main_frame, font=self.custom_font)
+            date_entry.pack(pady=10)
             date_entry.bind("<FocusIn>", lambda event: self.unbind_keys())
             date_entry.bind("<FocusOut>", lambda event: self.bind_keys())
 
@@ -166,8 +179,8 @@ class WaterTrackerApp:
                 except ValueError:
                     messagebox.showerror("Error", "Invalid input. Please enter the correct values.")
 
-            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
-            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
+            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
         else:
             messagebox.showwarning("Warning", "Please log in first.")
 
@@ -196,10 +209,10 @@ class WaterTrackerApp:
         if self.current_user:
             self.clear_frame(self.main_frame)
             
-            tk.Label(self.main_frame, text="Delete Specific Entry", font=self.custom_title_font, bg="lightblue").pack(pady=10)
-            tk.Label(self.main_frame, text="Entry Number:", bg="lightblue", font=self.custom_font).pack()
-            entry_number_entry = tk.Entry(self.main_frame)
-            entry_number_entry.pack(pady=5)
+            tk.Label(self.main_frame, text="Delete Specific Entry", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
+            tk.Label(self.main_frame, text="Entry Number:", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+            entry_number_entry = tk.Entry(self.main_frame, font=self.custom_font)
+            entry_number_entry.pack(pady=10)
             entry_number_entry.bind("<FocusIn>", lambda event: self.unbind_keys())
             entry_number_entry.bind("<FocusOut>", lambda event: self.bind_keys())
 
@@ -215,8 +228,8 @@ class WaterTrackerApp:
                 except ValueError:
                     messagebox.showerror("Error", "Invalid input. Please enter a number.")
 
-            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="white").pack(pady=5)
-            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+            tk.Button(self.main_frame, text="Submit", command=submit, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
+            tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
         else:
             messagebox.showwarning("Warning", "Please log in first.")
 
@@ -226,13 +239,13 @@ class WaterTrackerApp:
             history = view_history(self.current_user)
             if history is not None:
                 self.clear_frame(self.main_frame)
-                tk.Label(self.main_frame, text=f"Water Intake History for {self.current_user}:", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+                tk.Label(self.main_frame, text=f"Water Intake History for {self.current_user}:", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
                 if history:
                     for index, entry in enumerate(history, start=1):
-                        tk.Label(self.main_frame, text=f"{index}. {entry['date']}: {entry['amount']}ml", bg="lightblue", font=self.custom_font).pack()
+                        tk.Label(self.main_frame, text=f"{index}. {entry['date']}: {entry['amount']}ml", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
                 else:
-                    tk.Label(self.main_frame, text="No history to display.", bg="lightblue", font=self.custom_font).pack()
-                tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+                    tk.Label(self.main_frame, text="No history to display.", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+                tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
             else:
                 messagebox.showerror("Error", "Could not retrieve history.")
         else:
@@ -262,10 +275,10 @@ class WaterTrackerApp:
         """Displays the inspiration menu."""
         self.clear_frame(self.main_frame)
         
-        tk.Label(self.main_frame, text="Inspiration Menu", font=self.custom_title_font, bg="lightblue").pack(pady=10)
-        tk.Button(self.main_frame, text="Get Random Quote", command=self.get_random_quote, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="View Favorite Quotes", command=self.get_favorite_quotes, font=self.custom_font, bg="white").pack(pady=5)
-        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="white").pack(pady=5)
+        tk.Label(self.main_frame, text="Inspiration Menu", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
+        tk.Button(self.main_frame, text="Get Random Quote", command=self.get_random_quote, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
+        tk.Button(self.main_frame, text="View Favorite Quotes", command=self.get_favorite_quotes, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
+        tk.Button(self.main_frame, text="Back", command=self.create_main_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
 
     def get_random_quote(self):
         """Fetches and displays a random inspirational quote."""
@@ -282,13 +295,13 @@ class WaterTrackerApp:
         favorites = get_favorite_quotes()
         if favorites is not None:
             self.clear_frame(self.main_frame)
-            tk.Label(self.main_frame, text=f"Favorite Quotes:", font=self.custom_title_font, bg="lightblue").pack(pady=10)
+            tk.Label(self.main_frame, text=f"Favorite Quotes:", font=self.custom_title_font, fg="#61DAFB", bg="#282C34").pack(pady=20)
             if favorites:
                 for index, favorite in enumerate(favorites, start=1):
-                    tk.Label(self.main_frame, text=f"{index}. {favorite['quote']}", bg="lightblue", font=self.custom_font).pack()
+                    tk.Label(self.main_frame, text=f"{index}. {favorite['quote']}", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
             else:
-                tk.Label(self.main_frame, text="No favorite quotes to display.", bg="lightblue", font=self.custom_font).pack()
-            tk.Button(self.main_frame, text="Back", command=self.inspiration_menu, font=self.custom_font, bg="white").pack(pady=5)
+                tk.Label(self.main_frame, text="No favorite quotes to display.", fg="#ABB2BF", bg="#282C34", font=self.custom_font).pack()
+            tk.Button(self.main_frame, text="Back", command=self.inspiration_menu, font=self.custom_font, bg="#61DAFB", fg="#282C34", width=20).pack(pady=20)
         else:
             messagebox.showerror("Error", "Could not retrieve favorite quotes")
 
